@@ -1,7 +1,7 @@
 # song-sentiment
-Script to determine the sentiment of songs using the musiXmatch API and SentiWordNet, developed as an introduction to sentiment analysis and API usage.
+Script to determine the sentiment of songs using the Genius API, developed as an introduction to sentiment analysis and API usage.
 
-Goal: to determine the sentiment of songs using the musiXmatch API and SentiWordNet, and see if this is an accurate description of the sentiment of the mood of the song by comparing results to data from the Spotify API (to be implemented later).
+Goal: to determine the sentiment of songs using the Genius API, and see if this is an accurate description of the sentiment of the mood of the song by comparing results to data from the Spotify API (to be implemented later).
 
 Currently: working on the python script to determine the sentiment of a word.
 
