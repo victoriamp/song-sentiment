@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 base_url = "http://api.genius.com"
 headers = {'Authorization':'Bearer tzMDdaN3NMYI5PzD56pIAyFKy_nY7bt2aWnNcXyZOID0WT3mwh1sNOxPr-ueDOC1'}
@@ -17,8 +18,10 @@ def get_lyrics(song_api_path):
 	html = BeautifulSoup(page.text, "html.parser")
 	[h.extract() for h in html('script')]
 	lyrics = html.find("div", class_="lyrics").get_text()
-	lyrics.replace('\n', ' ')
-	return lyrics
+	lyrics = lyrics.lower().replace('\n', ' ')
+	lyrics = re.sub("[\[].*?[\]]", "", lyrics)
+	lyrics = re.sub(r'[^\w\s\']', '', lyrics)
+	return re.sub(' +', ' ', lyrics)
 
 try: 
 	file=open("out.txt", 'w')
