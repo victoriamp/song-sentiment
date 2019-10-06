@@ -1,6 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import nltk
+nltk.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import pandas 
+import matplotlib.pyplot as plot
 
 base_url = "http://api.genius.com"
 headers = {'Authorization':'Bearer tzMDdaN3NMYI5PzD56pIAyFKy_nY7bt2aWnNcXyZOID0WT3mwh1sNOxPr-ueDOC1'}
@@ -23,11 +28,13 @@ def get_lyrics(song_api_path):
 	lyrics = re.sub(r'[^\w\s\']', '', lyrics)
 	return re.sub(' +', ' ', lyrics)
 
+#makes sure there is a file to store lyrics in (out.txt)
 try: 
 	file=open("out.txt", 'w')
 except IOError:
 	file=open(fn, 'w+')
 
+#search for song, get lyrics and store in out.txt
 if __name__ == "__main__":
 	search_url = base_url + "/search"
 	data = {'q': song_title}
@@ -42,3 +49,30 @@ if __name__ == "__main__":
 		song_api_path = song_info["result"]["api_path"]
 		file.write(get_lyrics(song_api_path).replace('\n', ' '))
 		file.close()
+		
+#determine the sentiment of the song lyrics in out.txt
+	dataframe = pandas.DataFrame(columns=('song', 'positive', 'neutral', 'negative'))
+	analyzer = SentimentIntensityAnalyzer()
+	i=0
+	pos=0
+	neg=0
+	neu=0
+	f=open("out.txt", 'rb')
+	# fix file IO
+	for sentence in f.readLines():
+		this_sentence = sentence.decode('utf-8')
+		comp = sid.polarity_scores(this_sentence)
+		comp = comp['compound']
+		if comp>=0.5:
+			pos+=1
+		elif comp>-0.5 and comp<0.5:
+			neu +=1
+		else:
+			neg+=1
+	tot = pos + neg + neu
+	pc_neg = (neg/float(tot))*100
+	pc_neu = (neu/float(tot))*100
+	pc_pos = (pos/float(tot))*100
+	dataframe.loc[i] = (song, percent_positive, percent_neutral, percent_negative)
+	dataframe.plot.bar(x='song', stacked=True)
+	plt.show()
